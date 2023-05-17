@@ -12,6 +12,11 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.learning.lab_2_var_10.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 class MainFragment : Fragment() {
 
@@ -26,11 +31,12 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         val fontSizeRadioGroup: RadioGroup = view.findViewById(R.id.fontSizeRadioGroup)
         val okButton: Button = view.findViewById(R.id.okButton)
         val cancelButton: Button = view.findViewById(R.id.cancelButton)
+        val openButton: Button = view.findViewById(R.id.openButton) // New open button
         val resultTextView: TextView = view.findViewById(R.id.resultTextView)
         val inputEditText: EditText = view.findViewById(R.id.inputEditText)
 
@@ -40,7 +46,7 @@ class MainFragment : Fragment() {
             if (selectedFontSizeId != -1) {
                 val selectedFontSize: RadioButton = view.findViewById(selectedFontSizeId)
 
-                val fontSize = when(selectedFontSize.text.toString()) {
+                val fontSize = when (selectedFontSize.text.toString()) {
                     "Small" -> 14f
                     "Medium" -> 18f
                     "Large" -> 22f
@@ -49,18 +55,44 @@ class MainFragment : Fragment() {
 
                 resultTextView.textSize = fontSize
                 resultTextView.text = inputEditText.text.toString()
+
+                viewModel.setFontSize(fontSize)  // Save selected font size to ViewModel
+
+                // Save data to a file using Coroutines
+                GlobalScope.launch(Dispatchers.IO) {
+                    val file = File(context?.filesDir, "data.txt")
+                    file.writeText(inputEditText.text.toString())
+                }
             } else {
                 resultTextView.text = getString(R.string.error_message)
             }
         }
+
 
         cancelButton.setOnClickListener {
             fontSizeRadioGroup.clearCheck()
             inputEditText.text.clear()
             resultTextView.text = ""
         }
-    }
 
+        // Open button click listener
+        openButton.setOnClickListener {
+            GlobalScope.launch(Dispatchers.IO) {
+                val file = File(context?.filesDir, "data.txt")
+                val text = if (file.exists()) file.readText() else "No data"
+
+                withContext(Dispatchers.Main) {
+                    viewModel.setData(text)
+
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.container, DisplayFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit()
+                }
+            }
+        }
+
+    }
 
     companion object {
         fun newInstance() = MainFragment()

@@ -54,29 +54,43 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
         android:text="ОК"
-        app:layout_constraintStart_toStartOf="@+id/fontSizeRadioGroup"
+        app:layout_constraintStart_toStartOf="@+id/inputEditText"
         app:layout_constraintTop_toBottomOf="@+id/fontSizeRadioGroup" />
 
     <Button
         android:id="@+id/cancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="30dp"
         android:text="Cancel"
         app:layout_constraintBottom_toBottomOf="@+id/okButton"
-        app:layout_constraintEnd_toEndOf="@+id/fontSizeRadioGroup"
+        app:layout_constraintEnd_toStartOf="@+id/openButton"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/okButton"
         app:layout_constraintTop_toTopOf="@+id/okButton" />
+
+    <Button
+        android:id="@+id/openButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="Open"
+        app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
+        app:layout_constraintEnd_toEndOf="@+id/inputEditText"
+        app:layout_constraintStart_toEndOf="@+id/cancelButton"
+        app:layout_constraintTop_toTopOf="@+id/cancelButton" />
 
     <TextView
         android:id="@+id/resultTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:layout_marginTop="60dp"
         android:text=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/okButton"
+        app:layout_constraintTop_toBottomOf="@+id/cancelButton"
         tools:text="RESULT" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
